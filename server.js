@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import express, { json } from 'express';
+import express from 'express';
 import morgan from "morgan";
 import tourRouter from "./routes/tourRoutes.js";
 const app=express();
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-app.use(json());
+app.use(express.json());
 app.use("/api/v1/tours",tourRouter);
 
 const port=process.env.PORT || 3000;

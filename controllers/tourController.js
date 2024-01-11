@@ -1,9 +1,35 @@
+import { query } from "express";
 import Tour from "../models/tours.js";
 
 
 export async function getAllTours(req,res){
     try {
-        let tours= await Tour.find();
+        //GET query
+        const queryObj= {...req.query}
+
+        // Build Query
+        let queryStr=JSON.stringify(queryObj);
+        queryStr= queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match)=> `$${match}`);
+        console.log(JSON.parse(queryStr));
+        let query=  Tour.find(JSON.parse(queryStr));
+        // Field limiting
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            query = query.select(fields);
+        } else {
+            query = query.select('-__v');
+        }
+
+        // Sorting
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            query = query.sort(sortBy);
+        } else {
+            query = query.sort('-createdAt');
+        }
+
+        let tours= await query;
+        // EXECUTE QUERY
         res.status(200).json({
             status:"Success",
             length: tours.length,
@@ -35,13 +61,8 @@ export async function getTour(req,res){
 }
 
 export async function createTour(req,res){
-    let {name,rating,price} = req.body;
     try {
-        let newTour= await Tour.create({
-        name: name,
-        rating: rating,
-        price:price
-    });
+        let newTour= await Tour.create(req.body);
     res.status(201).json({
             message:"success",
             data:{tour:newTour}
@@ -86,5 +107,40 @@ export async function deleteTour(req,res){
             message:"Failure",
             error:err.message,
         })  
+    }
+}
+
+export async function getTourStats(req,res){
+    try {
+        let stats= await Tour.aggregate([
+            {
+                $match: {ratingsAverage:{$gte: 4.5}} //BASE CONDITION
+            },
+            {
+                $group:{ // GROUP BY
+                    _id: {$toUpper: "$difficulty"},
+                    numTours: {$sum :1},
+                    numRatings : {$sum:'$ratingsQuantity'},
+                    avgRating: {$avg: '$ratingsAverage'},
+                    avgPrice: {$avg: '$price'},
+                    minPrice: {$min :'$price'},
+                    maxPrice: {$max :'$price'},
+                }
+            },
+            {
+                $sort: {avgPrice: 1}
+            }
+        ]);
+        res.status(200).json({
+            status:"success",
+            data:{
+                stats
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            message:"Failure",
+            error:err.message,
+        });
     }
 }
