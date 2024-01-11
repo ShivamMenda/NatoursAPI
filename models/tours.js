@@ -1,4 +1,4 @@
-const mongoose=require("mongoose");
+import mongoose from "mongoose";
 
 const tourSchema= new mongoose.Schema({
     name: {
@@ -16,4 +16,6 @@ const tourSchema= new mongoose.Schema({
     } 
 });
 
-exports.Tour=mongoose.model('Tour',tourSchema);
+let Tour= mongoose.model("Tour",tourSchema);
+
+export default Tour;

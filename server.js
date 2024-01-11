@@ -1,11 +1,11 @@
-const dotenv=require("dotenv");
-const mongoose=require("mongoose");
-const express= require('express');
-const morgan=require("morgan")
-const tourRouter=require("./routes/tourRoutes")
+import { config } from "dotenv";
+import mongoose from "mongoose";
+import express, { json } from 'express';
+import morgan from "morgan";
+import tourRouter from "./routes/tourRoutes.js";
 const app=express();
 
-dotenv.config({path:"./config.env"});
+config({path:"./config.env"});
 
 mongoose.connect(process.env.DATABASE,{
     useNewUrlParser:true,
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-app.use(express.json());
+app.use(json());
 app.use("/api/v1/tours",tourRouter);
 
 const port=process.env.PORT || 3000;

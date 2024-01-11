@@ -1,14 +1,14 @@
-const express=require("express");
-const router=express.Router();
-const tourController=require("../controllers/tourController");
+import { Router } from "express";
+const tourRouter=Router();
+import { getAllTours, createTour, getTour, updateTour, deleteTour } from "../controllers/tourController.js";
 
-router.route("/")
-.get(tourController.getAllTours)
-.post(tourController.createTour);
+tourRouter.route("/")
+.get(getAllTours)
+.post(createTour);
 
-router.route("/:id")
-.get(tourController.getTour)
-.patch(tourController.updateTour)
-.delete(tourController.deleteTour);
+tourRouter.route("/:id")
+.get(getTour)
+.patch(updateTour)
+.delete(deleteTour);
 
-module.exports=router;
+export default tourRouter;

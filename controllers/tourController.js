@@ -1,8 +1,7 @@
-const express=require("express");
-const {Tour}= require("../models/tours");
+import Tour from "../models/tours.js";
 
 
-exports.getAllTours= async (req,res)=>{
+export async function getAllTours(req,res){
     try {
         let tours= await Tour.find();
         res.status(200).json({
@@ -17,9 +16,9 @@ exports.getAllTours= async (req,res)=>{
         })   
     }
         
-};
+}
 
-exports.getTour= async (req,res)=>{
+export async function getTour(req,res){
     let {id}= req.params;
     try {
         let tour= await Tour.findById(id);
@@ -33,9 +32,9 @@ exports.getTour= async (req,res)=>{
             error:err.message,
         })
     };
-};
+}
 
-exports.createTour= async (req,res)=>{
+export async function createTour(req,res){
     let {name,rating,price} = req.body;
     try {
         let newTour= await Tour.create({
@@ -53,8 +52,8 @@ exports.createTour= async (req,res)=>{
             error:err.message,
         })
     }   
-};
-exports.updateTour=async (req,res)=>{
+}
+export async function updateTour(req,res){
     try {
         const {id}=req.params
         let updatedTour= await Tour.findByIdAndUpdate(id,req.body,{
@@ -74,7 +73,7 @@ exports.updateTour=async (req,res)=>{
         })  
     }
 }
-exports.deleteTour= async (req,res)=>{
+export async function deleteTour(req,res){
     try {
         let {id} = req.params
         await Tour.findByIdAndDelete(id);

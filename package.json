@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A Simple Node.js api with MongoDB",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon server.js"
   },
